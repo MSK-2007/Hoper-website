@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HOPER - Our Ride, Your Hop</title>
-    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@geoapify/autocomplete-view@1.5.1/dist/bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@geoapify/autocomplete-view@1.5.1/dist/bundle.min.js"></script>
 
     <style>
         :root {
@@ -23,13 +24,10 @@
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Poppins', sans-serif; background-color: var(--primary-white); color: var(--primary-black); overflow-x: hidden; }
-
-        /* --- Base Styles --- */
         .top-nav { position: fixed; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; background-color: var(--primary-white); z-index: 1001; border-bottom: 1px solid var(--light-gray); }
         .nav-logo { display: flex; align-items: center; gap: 0.5rem; font-size: 1.2rem; font-weight: 700; text-decoration: none; color: var(--primary-black); }
         .nav-links { display: flex; gap: 0.5rem; list-style: none; align-items: center; }
         .nav-links a { text-decoration: none; color: var(--primary-white); background-color: var(--primary-black); padding: 0.6rem 1.2rem; border-radius: var(--border-radius-round); font-weight: 600; font-size: 0.9rem; transition: transform 0.2s ease, background-color 0.2s ease; display: block; }
-        .nav-links a:hover { transform: translateY(-2px); background-color: var(--dark-gray); }
         .mobile-menu-icon { display: none; font-size: 1.5rem; cursor: pointer; }
         .page { min-height: 100vh; display: none; padding-top: 80px; }
         .page.active { display: block; }
@@ -37,8 +35,9 @@
         .section-header { font-size: 2.5rem; font-weight: 700; }
         .find-ride-btn { padding: 1rem; background-color: var(--primary-black); color: var(--primary-white); border: none; border-radius: var(--border-radius-round); font-weight: 600; cursor: pointer; width: 100%; max-width: 250px; align-self: flex-start; margin-top: 1rem; }
         .book-ride-final-btn { display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 1rem; background-color: var(--primary-black); color: var(--primary-white); border: none; border-radius: var(--border-radius-round); font-weight: 600; cursor: pointer; width: 100%; max-width: 300px; align-self: flex-start; margin-top: 1rem; font-size: 1.1rem; }
-
-        /* --- Login Page --- */
+        .autocomplete-container { position: relative; margin-bottom: 1rem; }
+        .geoapify-autocomplete-bundle { z-index: 1000; }
+        .geoapify-autocomplete-items { border-radius: 15px !important; }
         #login-page .page-container { align-items: center; }
         .branding-side { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .branding-logo { font-size: 10rem; }
@@ -46,55 +45,33 @@
         .branding-side p { font-size: 1.5rem; color: var(--dark-gray); }
         .form-side { width: 100%; max-width: 450px; margin: 0 auto; text-align: center; }
         .form-side h3 { font-size: 2rem; margin-bottom: 1.5rem; }
-        .form-field { width: 100%; padding: 1rem; margin-bottom: 1rem; border: 1px solid var(--medium-gray); border-radius: var(--border-radius-round); font-size: 1rem; }
+        .form-field { width: 100%; padding: 1rem; border: 1px solid var(--medium-gray); border-radius: var(--border-radius-round); font-size: 1rem; }
         .password-wrapper { position: relative; width: 100%; margin-bottom: 1rem; }
         .password-wrapper .form-field { margin-bottom: 0; }
         #password-toggle-icon { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--dark-gray); }
-        .form-btn { width: 100%; padding: 1rem; border: none; border-radius: var(--border-radius-round); background-color: var(--primary-black); color: var(--primary-white); font-size: 1rem; font-weight: 600; cursor: pointer; margin-bottom: 1rem; transition: background-color 0.2s ease; }
-        .form-btn:hover { background-color: var(--dark-gray); }
+        .form-btn { width: 100%; padding: 1rem; border: none; border-radius: var(--border-radius-round); background-color: var(--primary-black); color: var(--primary-white); font-size: 1rem; font-weight: 600; cursor: pointer; margin-bottom: 1rem; }
         #form-toggle-link { display: block; color: var(--accent-blue); text-decoration: none; margin-bottom: 1rem; font-size: 0.9rem; }
         #forgot-password-link { display: block; color: var(--dark-gray); text-decoration: none; margin-bottom: 1.5rem; font-size: 0.9rem; }
         .divider { display: flex; align-items: center; text-align: center; color: var(--medium-gray); margin: 1.5rem 0; }
-        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--medium-gray); }
         .social-login-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem; width: 100%; padding: 1rem; border: none; border-radius: var(--border-radius-round); background-color: var(--primary-black); color: var(--primary-white); font-size: 1rem; font-weight: 600; cursor: pointer; }
-        .social-login-btn .fa-google { color: #DB4437; }
-
-        /* --- Booking & Ride Pages --- */
         #book-ride-page .left-side, #choose-ride-page .left-side { display: flex; flex-direction: column; gap: 1.5rem; padding-right: 2rem; }
         .ride-list { display: flex; flex-direction: column; gap: 1.5rem; }
-        .ride-card { display: flex; align-items: center; justify-content: space-between; padding: 1rem; border: 1px solid var(--light-gray); border-radius: 15px; cursor: pointer; transition: all 0.2s ease-in-out; }
-        .ride-card .vehicle-icon { width: 60px; height: 60px; object-fit: contain; margin-right: 1rem; }
-        .ride-card .ride-details { flex-grow: 1; }
+        .ride-card { display: flex; align-items: center; justify-content: space-between; padding: 1rem; border: 1px solid var(--light-gray); border-radius: 15px; cursor: pointer; }
         .ride-price { font-size: 1.5rem; font-weight: 700; }
-        .ride-card.selected { border-color: var(--primary-black); background-color: var(--light-gray); transform: scale(1.02); }
-        .ride-card:hover { transform: scale(1.02); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        #trip-details { font-size: 1.1rem; color: var(--dark-gray); }
-
-        /* --- Searching UI & Placeholders --- */
         .recent-places-placeholder, .map-placeholder { width: 100%; height: 60vh; background-color: var(--light-gray); border-radius: 20px; overflow: hidden; }
+        .placeholder-container { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; grid-column: 1 / -1; }
         #searching-ui { text-align: center; padding: 2rem 0; width: 100%; }
         .progress-bar-container { width: 100%; background-color: var(--light-gray); border-radius: 10px; overflow: hidden; height: 10px; }
         .progress-bar { width: 100%; height: 100%; background-color: var(--accent-blue); animation: loading-animation 2s infinite linear; }
         @keyframes loading-animation { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
         #cancel-search-btn { margin-top: 2rem; background: none; border: 1px solid var(--dark-gray); color: var(--dark-gray); padding: 0.8rem 1.5rem; border-radius: var(--border-radius-round); cursor: pointer; font-weight: 600; }
-        .placeholder-container { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; grid-column: 1 / -1; }
-        .placeholder-container h1 { font-size: 3rem; }
-        .recent-locations-list { list-style: none; }
-
-
-        /* --- Mobile Responsive Styles --- */
         @media (max-width: 992px) {
-            .page-container { grid-template-columns: 1fr; padding: 2rem 7%; }
+            .page-container { grid-template-columns: 1fr; }
             .nav-links { display: none; flex-direction: column; position: absolute; top: 70px; right: 5%; background-color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 10px; padding: 1rem; width: 200px; z-index: 1000; }
             .nav-links.active { display: flex; }
             .mobile-menu-icon { display: block; }
             #login-page .branding-side, #choose-ride-page .right-side, #book-ride-page .right-side { order: 2; }
             #login-page .form-side, #choose-ride-page .left-side, #book-ride-page .left-side { order: 1; padding-right: 0; }
-            .section-header { font-size: 2rem; text-align: center; }
-            .branding-logo { font-size: 8rem; }
-            .branding-side h2 { font-size: 3rem; }
-            .find-ride-btn, .book-ride-final-btn { max-width: none; width: 100%; align-self: center; }
-            .placeholder-container h1 { font-size: 2.5rem; }
         }
     </style>
 </head>
@@ -149,44 +126,45 @@
                 </div>
             </div>
         </section>
-
+        
         <section id="book-ride-page" class="page">
             <div class="page-container">
                 <div class="left-side">
                     <h2 class="section-header">BOOK A RIDE <i class="fa-solid fa-arrow-right-long"></i></h2>
                     <div class="location-inputs">
-                        <input type="text" id="pickup-location" class="form-field" placeholder="Enter Pickup Location">
-                        <input type="text" id="drop-location" class="form-field" placeholder="Enter Drop Location">
+                        <div class="autocomplete-container">
+                            <input id="pickup-location" class="form-field" placeholder="Enter Pickup Location"/>
+                        </div>
+                        <div class="autocomplete-container">
+                            <input id="drop-location" class="form-field" placeholder="Enter Drop Location"/>
+                        </div>
                     </div>
                     <button class="find-ride-btn" id="find-ride-btn">Find a Ride</button>
                 </div>
                 <div class="right-side">
                     <h3>Recently Visited Places</h3>
-                    <ul class="recent-locations-list" id="recent-locations"></ul>
+                    <div class="recent-places-placeholder"></div>
                 </div>
             </div>
         </section>
 
         <section id="choose-ride-page" class="page">
-             <div class="page-container">
+            <div class="page-container">
                  <div class="left-side">
                     <h2 class="section-header">CHOOSE THE RIDE <i class="fa-solid fa-arrow-right-long"></i></h2>
-                    <p id="trip-details">Your trip is approximately <strong id="trip-distance">--</strong> km.</p>
+                    <p>Your trip is approximately <strong id="trip-distance">--</strong> km.</p>
                     <div id="ride-options-container">
                         <div class="ride-list" id="ride-list">
                              <div class="ride-card" data-ride-type="Auto">
-                                <img src="https://img.icons8.com/ios/100/1A1A1A/auto-rickshaw.png" alt="Auto Rickshaw" class="vehicle-icon"/>
-                                <div class="ride-details"><h4>Auto</h4></div>
+                                <h4>Auto</h4>
                                 <h4 class="ride-price" data-ride-price="auto">--</h4>
                             </div>
                             <div class="ride-card" data-ride-type="Bike">
-                                <img src="https://img.icons8.com/ios/100/1A1A1A/motorcycle.png" alt="Motorbike" class="vehicle-icon"/>
-                                <div class="ride-details"><h4>Bike Direct</h4></div>
+                                <h4>Bike</h4>
                                 <h4 class="ride-price" data-ride-price="bike">--</h4>
                             </div>
                             <div class="ride-card" data-ride-type="Cab">
-                                <img src="https://img.icons8.com/ios/100/1A1A1A/car--v1.png" alt="Car" class="vehicle-icon"/>
-                                <div class="ride-details"><h4>Go Non AC</h4></div>
+                                <h4>Go Non AC</h4>
                                 <h4 class="ride-price" data-ride-price="cab">--</h4>
                             </div>
                         </div>
@@ -198,17 +176,7 @@
                         <button id="cancel-search-btn">Cancel Search</button>
                     </div>
                 </div>
-                <div class="right-side map-placeholder">
-                     <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d124423.75336029399!2d77.5226485548383!3d12.95396239121773!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1670c9b44e6d%3A0xf80c2354212040e3!2sBengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1668513511195!5m2!1sen!2sin" 
-                        width="100%" 
-                        height="100%" 
-                        style="border:0;" 
-                        allowfullscreen="" 
-                        loading="lazy" 
-                        referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
+                <div class="right-side map-placeholder"></div>
             </div>
         </section>
         
@@ -218,7 +186,6 @@
         <section id="about-us-page" class="page"><div class="page-container placeholder-container"><h1>About Us Page</h1></div></section>
     </main>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -236,19 +203,19 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const googleProvider = new firebase.auth.GoogleAuthProvider();
-        const db = firebase.firestore();
 
-        document.addEventListener('DOMContentLoaded', function() {
+        const GEOAPIFY_API_KEY = "16a5560c65544ab6a8d4a1a05a9da758";
+        let pickupCoords = null;
+        let dropoffCoords = null;
+        const PRICING = { bike: 10, auto: 15, cab: 20 };
+
+        window.onload = function() {
             const pages = document.querySelectorAll('.page');
-            const navLinks = document.getElementById('nav-links');
-            const mobileMenuIcon = document.getElementById('mobile-menu-icon');
             const findRideBtn = document.getElementById('find-ride-btn');
-            const pickupInput = document.getElementById('pickup-location');
-            const dropInput = document.getElementById('drop-location');
+            const googleLoginBtn = document.getElementById('google-login');
+            const navLogoutBtn = document.getElementById('nav-logout');
             const loginNavItem = document.getElementById('login-nav-item');
             const logoutNavItem = document.getElementById('logout-nav-item');
-            const navLogoutBtn = document.getElementById('nav-logout');
-            const googleLoginBtn = document.getElementById('google-login');
             const emailForm = document.getElementById('email-form');
             const emailInput = document.getElementById('email-input');
             const passwordInput = document.getElementById('password-input');
@@ -258,25 +225,21 @@
             const formToggleLink = document.getElementById('form-toggle-link');
             const passwordToggleIcon = document.getElementById('password-toggle-icon');
             const forgotPasswordLink = document.getElementById('forgot-password-link');
-            const bookRideFinalBtn = document.getElementById('book-ride-final-btn');
-            const rideCards = document.querySelectorAll('.ride-card');
-            const rideOptionsContainer = document.getElementById('ride-options-container');
-            const searchingUI = document.getElementById('searching-ui');
-            const cancelSearchBtn = document.getElementById('cancel-search-btn');
-            const recentLocationsList = document.getElementById('recent-locations');
-            const tripDistanceEl = document.getElementById('trip-distance');
-            
-            let currentTrip = {};
             let isSignUpMode = false;
-            let searchTimeout;
-
-            mobileMenuIcon.addEventListener('click', () => navLinks.classList.toggle('active'));
-
+            
+            new geoapify.Autocomplete(document.getElementById('pickup-location'), GEOAPIFY_API_KEY, {}).on('select', (location) => {
+                pickupCoords = location ? { lat: location.properties.lat, lon: location.properties.lon } : null;
+            });
+            new geoapify.Autocomplete(document.getElementById('drop-location'), GEOAPIFY_API_KEY, {}).on('select', (location) => {
+                dropoffCoords = location ? { lat: location.properties.lat, lon: location.properties.lon } : null;
+            });
+            
             const showPage = (pageId) => {
                 pages.forEach(page => page.classList.remove('active'));
                 const pageToShow = document.getElementById(pageId);
-                if(pageToShow) pageToShow.classList.add('active');
-                if (navLinks.classList.contains('active')) navLinks.classList.remove('active');
+                if (pageToShow) {
+                   pageToShow.classList.add('active');
+                }
             };
 
             auth.onAuthStateChanged((user) => {
@@ -290,17 +253,22 @@
                     logoutNavItem.style.display = 'none';
                 }
             });
+            
+            function handleAuthError(error) {
+                console.error("Auth Error:", error.code, error.message);
+                alert(error.message);
+            }
 
-            googleLoginBtn.addEventListener('click', () => auth.signInWithPopup(googleProvider).catch(handleAuthError));
+            googleLoginBtn.addEventListener('click', () => { auth.signInWithPopup(googleProvider).catch(handleAuthError); });
             navLogoutBtn.addEventListener('click', (e) => { e.preventDefault(); auth.signOut(); });
-
+            
             passwordToggleIcon.addEventListener('click', () => {
                 const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
                 passwordInput.setAttribute('type', type);
                 passwordToggleIcon.classList.toggle('fa-eye');
                 passwordToggleIcon.classList.toggle('fa-eye-slash');
             });
-
+            
             formToggleLink.addEventListener('click', (e) => {
                 e.preventDefault();
                 isSignUpMode = !isSignUpMode;
@@ -310,7 +278,7 @@
                 formToggleLink.textContent = isSignUpMode ? "Already have an account? Sign In" : "Don't have an account? Sign Up";
                 forgotPasswordLink.style.display = isSignUpMode ? 'none' : 'block';
             });
-
+            
             emailForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const email = emailInput.value;
@@ -324,65 +292,47 @@
             
             forgotPasswordLink.addEventListener('click', (e) => {
                 e.preventDefault();
-                const email = prompt("Please enter your email address to receive a password reset link:");
-                if (email) {
+                const email = prompt("Please enter your email to receive a password reset link:");
+                if(email) {
                     auth.sendPasswordResetEmail(email)
-                        .then(() => {
-                            alert("Password reset email sent! Please check your inbox.");
-                        })
+                        .then(() => alert("Password reset email sent! Please check your inbox."))
                         .catch(handleAuthError);
                 }
             });
 
-            function handleAuthError(error) {
-                console.error("Auth Error:", error.code, error.message);
-                alert(error.message);
+            function haversineDistance(coords1, coords2) {
+                function toRad(x) { return x * Math.PI / 180; }
+                const R = 6371;
+                const dLat = toRad(coords2.lat - coords1.lat);
+                const dLon = toRad(coords2.lon - coords1.lon);
+                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(toRad(coords1.lat)) * Math.cos(toRad(coords2.lat)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return R * c;
             }
 
+            findRideBtn.addEventListener('click', () => {
+                if (!pickupCoords || !dropoffCoords) {
+                    alert('Please select a valid pickup and drop-off location from the suggestions.');
+                    return;
+                }
+
+                const distanceInKm = haversineDistance(pickupCoords, dropoffCoords);
+                
+                document.getElementById('trip-distance').textContent = distanceInKm.toFixed(2);
+                document.querySelector('[data-ride-price="auto"]').textContent = `₹${(distanceInKm * PRICING.auto).toFixed(2)}`;
+                document.querySelector('[data-ride-price="bike"]').textContent = `₹${(distanceInKm * PRICING.bike).toFixed(2)}`;
+                document.querySelector('[data-ride-price="cab"]').textContent = `₹${(distanceInKm * PRICING.cab).toFixed(2)}`;
+
+                showPage('choose-ride-page');
+            });
+            
             document.getElementById('nav-home-link').addEventListener('click', (e) => { e.preventDefault(); auth.currentUser ? showPage('book-ride-page') : showPage('login-page'); });
             document.getElementById('nav-ride').addEventListener('click', (e) => { e.preventDefault(); auth.currentUser ? showPage('book-ride-page') : showPage('login-page'); });
             document.getElementById('nav-help').addEventListener('click', (e) => { e.preventDefault(); showPage('help-page'); });
             document.getElementById('nav-services').addEventListener('click', (e) => { e.preventDefault(); showPage('services-page'); });
             document.getElementById('nav-rewards').addEventListener('click', (e) => { e.preventDefault(); showPage('rewards-page'); });
             document.getElementById('nav-about').addEventListener('click', (e) => { e.preventDefault(); showPage('about-us-page'); });
-
-            findRideBtn.addEventListener('click', () => {
-                if (pickupInput.value.trim() === '' || dropInput.value.trim() === '') {
-                    alert('Please enter both pickup and drop locations.');
-                    return;
-                }
-                showPage('choose-ride-page');
-            });
-
-            rideCards.forEach(card => {
-                card.addEventListener('click', () => {
-                    rideCards.forEach(c => c.classList.remove('selected'));
-                    card.classList.add('selected');
-                });
-            });
-
-            bookRideFinalBtn.addEventListener('click', () => {
-                if (!document.querySelector('.ride-card.selected')) {
-                    alert('Please select a ride first.');
-                    return;
-                }
-                rideOptionsContainer.style.display = 'none';
-                searchingUI.style.display = 'block';
-                searchTimeout = setTimeout(() => {
-                    alert("We've found a rider for you!");
-                    rideOptionsContainer.style.display = 'block';
-                    searchingUI.style.display = 'none';
-                }, 5000);
-            });
-
-            cancelSearchBtn.addEventListener('click', () => {
-                clearTimeout(searchTimeout);
-                alert("Search canceled.");
-                rideOptionsContainer.style.display = 'block';
-                searchingUI.style.display = 'none';
-            });
-        });
+        };
     </script>
 </body>
 </html>
-
