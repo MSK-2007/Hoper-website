@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOPER - Our Ride, Your Hop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="top-nav">
+        <a href="#" class="nav-logo" id="nav-home">
+            <i class="fa-solid fa-frog"></i>
+            <h1>HOPER</h1>
+        </a>
+        <nav>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#" id="nav-home-link">Home</a></li>
+                <li><a href="#" id="nav-ride">Ride</a></li>
+                <li id="login-nav-item"><a href="#" id="nav-login">Login</a></li>
+                <li id="logout-nav-item" style="display: none;"><a href="#" id="nav-logout">Logout</a></li>
+                <li><a href="#">Help</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">Rewards</a></li>
+                <li><a href="#">About Us</a></li>
+            </ul>
+        </nav>
+        <i class="fa-solid fa-bars mobile-menu-icon" id="mobile-menu-icon"></i>
+    </header>
+
+    <main>
+        <section id="login-page" class="page">
+            <div class="page-container">
+                <div class="branding-side">
+                    <i class="fa-solid fa-frog branding-logo"></i>
+                    <h2>HOPER</h2>
+                    <p>Our Ride, Your Hop</p>
+                </div>
+                <div class="form-side">
+                    <h3>Login</h3>
+                    <button class="social-login-btn" id="google-login">
+                        <i class="fa-brands fa-google"></i>
+                        Sign in with Google
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <section id="book-ride-page" class="page">
+            <div class="page-container">
+                <div class="left-side">
+                    <h2 class="section-header">BOOK A RIDE <i class="fa-solid fa-arrow-right-long"></i></h2>
+                    <div class="location-inputs">
+                        <input type="text" id="pickup-location" class="form-field" placeholder="Enter Pickup Location">
+                        <input type="text" id="drop-location" class="form-field" placeholder="Enter Drop Location">
+                    </div>
+                    <button class="find-ride-btn" id="find-ride-btn">Find a Ride</button>
+                </div>
+                <div class="right-side">
+                    <h3>Recently Visited Places</h3>
+                    <div class="recent-places-placeholder"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="choose-ride-page" class="page">
+            <div class="page-container">
+                 <div class="left-side">
+                    <h2 class="section-header">CHOOSE THE RIDE <i class="fa-solid fa-arrow-right-long"></i></h2>
+                    <div id="ride-options-container">
+                        <div class="ride-list" id="ride-list">
+                             <div class="ride-card">
+                                <img src="https://img.icons8.com/ios/100/1A1A1A/auto-rickshaw.png" alt="Auto Rickshaw" class="vehicle-icon"/>
+                                <div class="ride-details">
+                                    <h4>Auto <i class="fa-solid fa-user-group"></i> 3</h4>
+                                    <p>2 mins away • 8:20 PM</p>
+                                </div>
+                                <h4 class="ride-price">₹101.93</h4>
+                            </div>
+                            <div class="ride-card">
+                                <img src="https://img.icons8.com/ios/100/1A1A1A/motorcycle.png" alt="Motorbike" class="vehicle-icon"/>
+                                <div class="ride-details">
+                                    <h4>Bike Direct <i class="fa-solid fa-user"></i> 1</h4>
+                                    <p>8 mins away • 8:26 PM</p>
+                                </div>
+                                <h4 class="ride-price">₹72.89</h4>
+                            </div>
+                            <div class="ride-card">
+                                <img src="https://img.icons8.com/ios/100/1A1A1A/car--v1.png" alt="Car" class="vehicle-icon"/>
+                                <div class="ride-details">
+                                    <h4>Go Non AC <i class="fa-solid fa-user-group"></i> 4</h4>
+                                    <p>5 mins away • 8:23 PM</p>
+                                </div>
+                                <h4 class="ride-price">₹137.43</h4>
+                            </div>
+                        </div>
+                        <button class="book-ride-final-btn" id="book-ride-final-btn">Book a Ride</button>
+                    </div>
+                    <div id="searching-ui" style="display: none;">
+                        <h4>Looking for riders near you...</h4>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar"></div>
+                        </div>
+                        <button id="cancel-search-btn">Cancel Search</button>
+                    </div>
+                </div>
+                <div class="right-side map-placeholder">
+    <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d124423.75336029399!2d77.5226485548383!3d12.95396239121773!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1670c9b44e6d%3A0xf80c2354212040e3!2sBengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1668513511195!5m2!1sen!2sin" 
+        width="100%" 
+        height="100%" 
+        style="border:0;" 
+        allowfullscreen="" 
+        loading="lazy" 
+        referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
+</div>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+    <script src="script.js"></script>
+</body>
+</html>
