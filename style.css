@@ -30,23 +30,29 @@ body { font-family: 'Poppins', sans-serif; background-color: var(--primary-white
 .branding-logo { font-size: 10rem; }
 .branding-side h2 { font-size: 4rem; letter-spacing: 4px; margin-top: -2rem; }
 .branding-side p { font-size: 1.5rem; color: var(--dark-gray); }
-.form-side { width: 100%; max-width: 450px; margin: 0 auto; text-align: center; }
-.form-side h3 { margin-bottom: 1.5rem; }
-.form-field { width: 100%; padding: 1rem; margin-bottom: 1rem; border: 1px solid var(--medium-gray); border-radius: var(--border-radius-round); font-size: 1rem; }
-.form-btn { width: 100%; padding: 1rem; border: none; border-radius: var(--border-radius-round); background-color: var(--primary-black); color: var(--primary-white); font-size: 1rem; font-weight: 600; cursor: pointer; margin-bottom: 1rem; }
-#form-toggle-link { display: block; color: var(--accent-blue); text-decoration: none; margin-bottom: 1.5rem; font-size: 0.9rem; }
-.divider { display: flex; align-items: center; text-align: center; color: var(--medium-gray); margin: 1.5rem 0; }
-.divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--medium-gray); }
-.social-login-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem; width: 100%; padding: 1rem; border: none; border-radius: var(--border-radius-round); background-color: var(--primary-black); color: var(--primary-white); font-size: 1rem; font-weight: 600; cursor: pointer; }
+.form-side { width: 100%; max-width: 450px; margin: 0 auto; }
+.social-login-btn { display: flex; align-items: center; justify-content: center; gap: 0.75rem; width: 100%; padding: 1rem; margin-bottom: 1rem; border: none; border-radius: var(--border-radius-round); background-color: var(--primary-black); color: var(--primary-white); font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease; }
 .social-login-btn .fa-google { color: #DB4437; }
 
 /* --- Booking & Ride Pages --- */
 #book-ride-page .left-side, #choose-ride-page .left-side { display: flex; flex-direction: column; gap: 1.5rem; padding-right: 2rem; }
+.form-field { width: 100%; padding: 1rem; margin-bottom: 1rem; border: 1px solid var(--medium-gray); border-radius: var(--border-radius-round); font-size: 1rem; }
 .ride-list { display: flex; flex-direction: column; gap: 1.5rem; }
-.ride-card { display: flex; align-items: center; justify-content: space-between; padding: 1rem; border: 1px solid var(--light-gray); border-radius: 15px; cursor: pointer; }
+.ride-card { display: flex; align-items: center; justify-content: space-between; padding: 1rem; border: 1px solid var(--light-gray); border-radius: 15px; cursor: pointer; transition: all 0.2s ease-in-out; }
 .ride-card .vehicle-icon { width: 60px; height: 60px; object-fit: contain; margin-right: 1rem; }
 .ride-card .ride-details { flex-grow: 1; }
 .ride-price { font-size: 1.5rem; font-weight: 700; }
+
+/* THIS IS THE FIX: Styles for the selected ride */
+.ride-card.selected {
+    border-color: var(--primary-black);
+    background-color: var(--light-gray);
+    transform: scale(1.02);
+}
+.ride-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
 
 /* --- Searching UI & Placeholders --- */
 .recent-places-placeholder, .map-placeholder { width: 100%; height: 60vh; background-color: var(--light-gray); border-radius: 20px; overflow: hidden; }
@@ -71,3 +77,4 @@ body { font-family: 'Poppins', sans-serif; background-color: var(--primary-white
     .branding-side h2 { font-size: 3rem; }
     .placeholder-container h1 { font-size: 2.5rem; }
 }
+

@@ -1,13 +1,13 @@
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyAN2oL3U1gMYOn7-WqgnEE719yaLoii8jA",
-  authDomain: "hoper-cf7e8.firebaseapp.com",
-  projectId: "hoper-cf7e8",
-  storageBucket: "hoper-cf7e8.appspot.com",
-  messagingSenderId: "873807430355",
-  appId: "1:873807430355:web:a60afb7d06f884f80f0a26",
-  measurementId: "G-9VCJ6GM2EX"
+  apiKey: "AIzaSyBgJExYI1FQWl7CqKwQhXoi5ys5_FIXzTk",
+  authDomain: "hoper-booking.firebaseapp.com",
+  projectId: "hoper-booking",
+  storageBucket: "hoper-booking.firebasestorage.app",
+  messagingSenderId: "511172232861",
+  appId: "1:511172232861:web:37c6233afdcdc843963674",
+  measurementId: "G-J9F16BS0RE"
 };
-
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
