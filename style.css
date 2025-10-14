@@ -64,5 +64,17 @@ body { font-family: 'Poppins', sans-serif; background-color: var(--primary-white
 .placeholder-container { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; grid-column: 1 / -1; }
 .placeholder-container h1 { font-size: 3rem; }
 
-/* --- THIS IS THE UPDATED RESPONSIVE SECTION --- */
-@media (max-width: 992px)
+/* --- Mobile Responsive Styles --- */
+@media (max-width: 992px) {
+    .page-container { grid-template-columns: 1fr; padding: 2rem 7%; }
+    .nav-links { display: none; flex-direction: column; position: absolute; top: 70px; right: 5%; background-color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 10px; padding: 1rem; width: 200px; z-index: 1000; }
+    .nav-links.active { display: flex; }
+    .mobile-menu-icon { display: block; }
+    #login-page .branding-side, #choose-ride-page .right-side, #book-ride-page .right-side { order: 2; }
+    #login-page .form-side, #choose-ride-page .left-side, #book-ride-page .left-side { order: 1; padding-right: 0; }
+    .section-header { font-size: 2rem; text-align: center; }
+    .branding-logo { font-size: 8rem; }
+    .branding-side h2 { font-size: 3rem; }
+    .find-ride-btn, .book-ride-final-btn { max-width: none; width: 100%; align-self: center; }
+    .placeholder-container h1 { font-size: 2.5rem; }
+}
