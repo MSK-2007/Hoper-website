@@ -105,10 +105,49 @@
 </head>
 <body>
 
-    <header class="top-nav"><!-- Nav Bar HTML --></header>
+    <header class="top-nav">
+        <a href="#" class="nav-logo" id="nav-home"><i class="fa-solid fa-frog"></i><h1>HOPER</h1></a>
+        <nav>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#" id="nav-home-link">Home</a></li>
+                <li><a href="#" id="nav-ride">Ride</a></li>
+                <li id="login-nav-item"><a href="#" id="nav-login">Login</a></li>
+                <li id="logout-nav-item" style="display: none;"><a href="#" id="nav-logout">Logout</a></li>
+                <li><a href="#" id="nav-help">Help</a></li>
+                <li><a href="#" id="nav-services">Services</a></li>
+                <li><a href="#" id="nav-rewards">Rewards</a></li>
+                <li><a href="#" id="nav-about">About Us</a></li>
+            </ul>
+        </nav>
+        <i class="fa-solid fa-bars mobile-menu-icon" id="mobile-menu-icon"></i>
+    </header>
 
     <main>
-        <section id="login-page" class="page"><!-- Login Page HTML --></section>
+        <section id="login-page" class="page">
+            <div class="page-container">
+                <div class="branding-side">
+                    <i class="fa-solid fa-frog branding-logo"></i>
+                    <h2>HOPER</h2>
+                    <p>Our Ride, Your Hop</p>
+                </div>
+                <div class="form-side">
+                    <h3 id="form-title">Sign In</h3>
+                    <form id="email-form">
+                        <input type="email" id="email-input" class="form-field" placeholder="Email" required>
+                        <div class="password-wrapper">
+                            <input type="password" id="password-input" class="form-field" placeholder="Password (min. 6 characters)" required>
+                            <i class="fa-solid fa-eye" id="password-toggle-icon"></i>
+                        </div>
+                        <button type="submit" id="sign-in-btn" class="form-btn">Sign In</button>
+                        <button type="submit" id="create-account-btn" class="form-btn" style="display: none;">Create Account</button>
+                    </form>
+                    <a href="#" id="form-toggle-link">Don't have an account? Sign Up</a>
+                    <a href="#" id="forgot-password-link">Forgot Password?</a>
+                    <div class="divider">OR</div>
+                    <button class="social-login-btn" id="google-login"><i class="fa-brands fa-google"></i> Sign in with Google</button>
+                </div>
+            </div>
+        </section>
         
         <section id="book-ride-page" class="page">
             <div class="page-container">
@@ -122,9 +161,7 @@
                 </div>
                 <div class="right-side">
                     <h3>Recently Visited Places</h3>
-                    <ul class="recent-locations-list" id="recent-locations">
-                        <!-- Ride history will be populated here -->
-                    </ul>
+                    <ul class="recent-locations-list" id="recent-locations"></ul>
                 </div>
             </div>
         </section>
@@ -154,16 +191,25 @@
                         </div>
                         <button class="book-ride-final-btn" id="book-ride-final-btn">Book a Ride</button>
                     </div>
-                    <div id="searching-ui" style="display: none;"><!-- Searching UI HTML --></div>
+                    <div id="searching-ui" style="display: none;">
+                        <h4>Looking for riders near you...</h4>
+                        <div class="progress-bar-container"><div class="progress-bar"></div></div>
+                        <button id="cancel-search-btn">Cancel Search</button>
+                    </div>
                 </div>
-                <div class="right-side map-placeholder"><!-- Map Placeholder --></div>
+                <div class="right-side map-placeholder">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d124423.75336029399!2d77.5226485548383!3d12.95396239121773!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1670c9b44e6d%3A0xf80c2354212040e3!2sBengaluru%2C%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1668513511195!5m2!1sen!2sin" 
+                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
             </div>
         </section>
         
-        <section id="help-page" class="page"><!-- Help Page HTML --></section>
-        <section id="services-page" class="page"><!-- Services Page HTML --></section>
-        <section id="rewards-page" class="page"><!-- Rewards Page HTML --></section>
-        <section id="about-us-page" class="page"><!-- About Page HTML --></section>
+        <section id="help-page" class="page"><div class="page-container placeholder-container"><h1>Help & Support</h1><p>This page is under construction.</p></div></section>
+        <section id="services-page" class="page"><div class="page-container placeholder-container"><h1>Our Services</h1><p>This page is under construction.</p></div></section>
+        <section id="rewards-page" class="page"><div class="page-container placeholder-container"><h1>Your Rewards</h1><p>This page is under construction.</p></div></section>
+        <section id="about-us-page" class="page"><div class="page-container placeholder-container"><h1>About HOPER</h1><p>This page is under construction.</p></div></section>
     </main>
 
     <!-- Firebase SDKs -->
@@ -187,30 +233,112 @@
         const db = firebase.firestore();
 
         document.addEventListener('DOMContentLoaded', function() {
-            // ... (all existing element variables) ...
-            const recentLocationsList = document.getElementById('recent-locations');
+            const pages = document.querySelectorAll('.page');
+            const navLinks = document.getElementById('nav-links');
+            const mobileMenuIcon = document.getElementById('mobile-menu-icon');
+            const findRideBtn = document.getElementById('find-ride-btn');
             const pickupInput = document.getElementById('pickup-location');
             const dropInput = document.getElementById('drop-location');
-            const tripDistanceEl = document.getElementById('trip-distance');
-            const findRideBtn = document.getElementById('find-ride-btn');
+            const loginNavItem = document.getElementById('login-nav-item');
+            const logoutNavItem = document.getElementById('logout-nav-item');
+            const navLogoutBtn = document.getElementById('nav-logout');
+            const googleLoginBtn = document.getElementById('google-login');
+            const emailForm = document.getElementById('email-form');
+            const emailInput = document.getElementById('email-input');
+            const passwordInput = document.getElementById('password-input');
+            const formTitle = document.getElementById('form-title');
+            const signInBtn = document.getElementById('sign-in-btn');
+            const createAccountBtn = document.getElementById('create-account-btn');
+            const formToggleLink = document.getElementById('form-toggle-link');
+            const passwordToggleIcon = document.getElementById('password-toggle-icon');
+            const forgotPasswordLink = document.getElementById('forgot-password-link');
             const bookRideFinalBtn = document.getElementById('book-ride-final-btn');
             const rideCards = document.querySelectorAll('.ride-card');
-            
+            const rideOptionsContainer = document.getElementById('ride-options-container');
+            const searchingUI = document.getElementById('searching-ui');
+            const cancelSearchBtn = document.getElementById('cancel-search-btn');
+            const recentLocationsList = document.getElementById('recent-locations');
+            const tripDistanceEl = document.getElementById('trip-distance');
+
             let currentTrip = {};
+            let isSignUpMode = false;
+            let searchTimeout;
             const PRICING = { bike: 10, auto: 15, cab: 20 };
 
-            const showPage = (pageId) => { /* ... existing showPage logic ... */ };
-            
+            mobileMenuIcon.addEventListener('click', () => navLinks.classList.toggle('active'));
+
+            const showPage = (pageId) => {
+                pages.forEach(page => page.classList.remove('active'));
+                const pageToShow = document.getElementById(pageId);
+                if(pageToShow) pageToShow.classList.add('active');
+                if (navLinks.classList.contains('active')) navLinks.classList.remove('active');
+            };
+
             auth.onAuthStateChanged((user) => {
                 if (user) {
                     showPage('book-ride-page');
                     loadRideHistory(user.uid);
-                    // ... other auth logic
+                    loginNavItem.style.display = 'none';
+                    logoutNavItem.style.display = 'block';
                 } else {
                     showPage('login-page');
-                    // ... other auth logic
+                    loginNavItem.style.display = 'block';
+                    logoutNavItem.style.display = 'none';
                 }
             });
+
+            googleLoginBtn.addEventListener('click', () => auth.signInWithPopup(googleProvider).catch(handleAuthError));
+            navLogoutBtn.addEventListener('click', (e) => { e.preventDefault(); auth.signOut(); });
+
+            passwordToggleIcon.addEventListener('click', () => {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                passwordToggleIcon.classList.toggle('fa-eye');
+                passwordToggleIcon.classList.toggle('fa-eye-slash');
+            });
+
+            formToggleLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                isSignUpMode = !isSignUpMode;
+                formTitle.textContent = isSignUpMode ? "Create Account" : "Sign In";
+                signInBtn.style.display = isSignUpMode ? 'none' : 'block';
+                createAccountBtn.style.display = isSignUpMode ? 'block' : 'none';
+                formToggleLink.textContent = isSignUpMode ? "Already have an account? Sign In" : "Don't have an account? Sign Up";
+                forgotPasswordLink.style.display = isSignUpMode ? 'none' : 'block';
+            });
+
+            emailForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = emailInput.value;
+                const password = passwordInput.value;
+                if (isSignUpMode) {
+                    auth.createUserWithEmailAndPassword(email, password).catch(handleAuthError);
+                } else {
+                    auth.signInWithEmailAndPassword(email, password).catch(handleAuthError);
+                }
+            });
+            
+            forgotPasswordLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                const email = prompt("Please enter your email address to receive a password reset link:");
+                if (email) {
+                    auth.sendPasswordResetEmail(email)
+                        .then(() => alert("Password reset email sent! Please check your inbox."))
+                        .catch(handleAuthError);
+                }
+            });
+
+            function handleAuthError(error) {
+                console.error("Auth Error:", error.code, error.message);
+                alert(error.message);
+            }
+
+            document.getElementById('nav-home-link').addEventListener('click', (e) => { e.preventDefault(); auth.currentUser ? showPage('book-ride-page') : showPage('login-page'); });
+            document.getElementById('nav-ride').addEventListener('click', (e) => { e.preventDefault(); auth.currentUser ? showPage('book-ride-page') : showPage('login-page'); });
+            document.getElementById('nav-help').addEventListener('click', (e) => { e.preventDefault(); showPage('help-page'); });
+            document.getElementById('nav-services').addEventListener('click', (e) => { e.preventDefault(); showPage('services-page'); });
+            document.getElementById('nav-rewards').addEventListener('click', (e) => { e.preventDefault(); showPage('rewards-page'); });
+            document.getElementById('nav-about').addEventListener('click', (e) => { e.preventDefault(); showPage('about-us-page'); });
 
             findRideBtn.addEventListener('click', () => {
                 if (pickupInput.value.trim() === '' || dropInput.value.trim() === '') {
@@ -256,9 +384,22 @@
                 currentTrip.price = parseFloat(selectedRideCard.querySelector('.ride-price').textContent.replace('₹', ''));
                 
                 saveRideHistory(auth.currentUser.uid, currentTrip);
-                
-                // Simulate searching and then go back to booking page
-                // ... (existing searching UI logic) ...
+
+                rideOptionsContainer.style.display = 'none';
+                searchingUI.style.display = 'block';
+                searchTimeout = setTimeout(() => {
+                    alert("We've found a rider for you!");
+                    rideOptionsContainer.style.display = 'block';
+                    searchingUI.style.display = 'none';
+                    showPage('book-ride-page');
+                }, 5000);
+            });
+            
+            cancelSearchBtn.addEventListener('click', () => {
+                clearTimeout(searchTimeout);
+                alert("Search canceled.");
+                rideOptionsContainer.style.display = 'block';
+                searchingUI.style.display = 'none';
             });
 
             function saveRideHistory(userId, tripData) {
@@ -272,7 +413,7 @@
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 }).then(() => {
                     console.log("Ride saved successfully!");
-                    loadRideHistory(userId); // Refresh the list
+                    loadRideHistory(userId);
                 }).catch(error => console.error("Error saving ride:", error));
             }
 
@@ -317,8 +458,6 @@
                       });
                   }).catch(error => console.error("Error loading ride history:", error));
             }
-            
-            // ... (all other existing functions and event listeners for auth, nav, etc.) ...
         });
     </script>
 </body>
