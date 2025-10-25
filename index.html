@@ -233,6 +233,7 @@
         const googleProvider = new firebase.auth.GoogleAuthProvider();
 
         document.addEventListener('DOMContentLoaded', function() {
+            // --- Element Variables ---
             const pages = document.querySelectorAll('.page');
             const navLinks = document.getElementById('nav-links');
             const mobileMenuIcon = document.getElementById('mobile-menu-icon');
@@ -261,115 +262,144 @@
             let isSignUpMode = false;
             let searchTimeout;
 
-            mobileMenuIcon.addEventListener('click', () => navLinks.classList.toggle('active'));
+            // --- Mobile Menu Toggle ---
+            if (mobileMenuIcon) {
+                mobileMenuIcon.addEventListener('click', () => navLinks.classList.toggle('active'));
+            }
 
             const showPage = (pageId) => {
                 pages.forEach(page => page.classList.remove('active'));
                 const pageToShow = document.getElementById(pageId);
                 if(pageToShow) pageToShow.classList.add('active');
-                if (navLinks.classList.contains('active')) navLinks.classList.remove('active');
+                if (navLinks && navLinks.classList.contains('active')) { // Check if navLinks exists
+                     navLinks.classList.remove('active');
+                }
             };
 
+            // --- Authentication Logic ---
             auth.onAuthStateChanged((user) => {
                 if (user) {
                     showPage('book-ride-page');
-                    loginNavItem.style.display = 'none';
-                    logoutNavItem.style.display = 'block';
+                    if (loginNavItem) loginNavItem.style.display = 'none';
+                    if (logoutNavItem) logoutNavItem.style.display = 'block';
                 } else {
                     showPage('login-page');
-                    loginNavItem.style.display = 'block';
-                    logoutNavItem.style.display = 'none';
+                     if (loginNavItem) loginNavItem.style.display = 'block';
+                    if (logoutNavItem) logoutNavItem.style.display = 'none';
                 }
             });
 
-            googleLoginBtn.addEventListener('click', () => auth.signInWithPopup(googleProvider).catch(handleAuthError));
-            navLogoutBtn.addEventListener('click', (e) => { e.preventDefault(); auth.signOut(); });
+            if (googleLoginBtn) {
+                 googleLoginBtn.addEventListener('click', () => auth.signInWithPopup(googleProvider).catch(handleAuthError));
+            }
+             if (navLogoutBtn) {
+                 navLogoutBtn.addEventListener('click', (e) => { e.preventDefault(); auth.signOut(); });
+            }
 
-            passwordToggleIcon.addEventListener('click', () => {
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-                passwordToggleIcon.classList.toggle('fa-eye');
-                passwordToggleIcon.classList.toggle('fa-eye-slash');
-            });
+            if (passwordToggleIcon) {
+                passwordToggleIcon.addEventListener('click', () => {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    passwordToggleIcon.classList.toggle('fa-eye');
+                    passwordToggleIcon.classList.toggle('fa-eye-slash');
+                });
+            }
 
-            formToggleLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                isSignUpMode = !isSignUpMode;
-                formTitle.textContent = isSignUpMode ? "Create Account" : "Sign In";
-                signInBtn.style.display = isSignUpMode ? 'none' : 'block';
-                createAccountBtn.style.display = isSignUpMode ? 'block' : 'none';
-                formToggleLink.textContent = isSignUpMode ? "Already have an account? Sign In" : "Don't have an account? Sign Up";
-                forgotPasswordLink.style.display = isSignUpMode ? 'none' : 'block';
-            });
+            if (formToggleLink) {
+                formToggleLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    isSignUpMode = !isSignUpMode;
+                    if (formTitle) formTitle.textContent = isSignUpMode ? "Create Account" : "Sign In";
+                    if (signInBtn) signInBtn.style.display = isSignUpMode ? 'none' : 'block';
+                    if (createAccountBtn) createAccountBtn.style.display = isSignUpMode ? 'block' : 'none';
+                    e.target.textContent = isSignUpMode ? "Already have an account? Sign In" : "Don't have an account? Sign Up";
+                    if (forgotPasswordLink) forgotPasswordLink.style.display = isSignUpMode ? 'none' : 'block';
+                });
+            }
 
-            emailForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const email = emailInput.value;
-                const password = passwordInput.value;
-                if (isSignUpMode) {
-                    auth.createUserWithEmailAndPassword(email, password).catch(handleAuthError);
-                } else {
-                    auth.signInWithEmailAndPassword(email, password).catch(handleAuthError);
-                }
-            });
+            if (emailForm) {
+                emailForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const email = emailInput.value;
+                    const password = passwordInput.value;
+                    if (isSignUpMode) {
+                        auth.createUserWithEmailAndPassword(email, password).catch(handleAuthError);
+                    } else {
+                        auth.signInWithEmailAndPassword(email, password).catch(handleAuthError);
+                    }
+                });
+            }
             
-            forgotPasswordLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                const email = prompt("Please enter your email address to receive a password reset link:");
-                if (email) {
-                    auth.sendPasswordResetEmail(email)
-                        .then(() => alert("Password reset email sent! Please check your inbox."))
-                        .catch(handleAuthError);
-                }
-            });
+            if (forgotPasswordLink) {
+                forgotPasswordLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const email = prompt("Please enter your email address to receive a password reset link:");
+                    if (email) {
+                        auth.sendPasswordResetEmail(email)
+                            .then(() => alert("Password reset email sent! Please check your inbox."))
+                            .catch(handleAuthError);
+                    }
+                });
+            }
 
             function handleAuthError(error) {
                 console.error("Auth Error:", error.code, error.message);
                 alert(error.message);
             }
 
-            document.getElementById('nav-home-link').addEventListener('click', (e) => { e.preventDefault(); auth.currentUser ? showPage('book-ride-page') : showPage('login-page'); });
-            document.getElementById('nav-ride').addEventListener('click', (e) => { e.preventDefault(); auth.currentUser ? showPage('book-ride-page') : showPage('login-page'); });
-            document.getElementById('nav-help').addEventListener('click', (e) => { e.preventDefault(); showPage('help-page'); });
-            document.getElementById('nav-services').addEventListener('click', (e) => { e.preventDefault(); showPage('services-page'); });
-            document.getElementById('nav-rewards').addEventListener('click', (e) => { e.preventDefault(); showPage('rewards-page'); });
-            document.getElementById('nav-about').addEventListener('click', (e) => { e.preventDefault(); showPage('about-us-page'); });
+            // --- Navigation Event Listeners ---
+            document.getElementById('nav-home-link')?.addEventListener('click', (e) => { e.preventDefault(); auth.currentUser ? showPage('book-ride-page') : showPage('login-page'); });
+            document.getElementById('nav-ride')?.addEventListener('click', (e) => { e.preventDefault(); auth.currentUser ? showPage('book-ride-page') : showPage('login-page'); });
+            document.getElementById('nav-help')?.addEventListener('click', (e) => { e.preventDefault(); showPage('help-page'); });
+            document.getElementById('nav-services')?.addEventListener('click', (e) => { e.preventDefault(); showPage('services-page'); });
+            document.getElementById('nav-rewards')?.addEventListener('click', (e) => { e.preventDefault(); showPage('rewards-page'); });
+            document.getElementById('nav-about')?.addEventListener('click', (e) => { e.preventDefault(); showPage('about-us-page'); });
 
-            findRideBtn.addEventListener('click', () => {
-                if (pickupInput.value.trim() === '' || dropInput.value.trim() === '') {
-                    alert('Please enter both pickup and drop locations.');
-                    return;
-                }
-                showPage('choose-ride-page');
-            });
-
-            rideCards.forEach(card => {
-                card.addEventListener('click', () => {
-                    rideCards.forEach(c => c.classList.remove('selected'));
-                    card.classList.add('selected');
+            // --- App Flow Logic ---
+            if (findRideBtn) {
+                findRideBtn.addEventListener('click', () => {
+                    if (pickupInput.value.trim() === '' || dropInput.value.trim() === '') {
+                        alert('Please enter both pickup and drop locations.');
+                        return;
+                    }
+                    showPage('choose-ride-page');
                 });
-            });
+            }
 
-            bookRideFinalBtn.addEventListener('click', () => {
-                if (!document.querySelector('.ride-card.selected')) {
-                    alert('Please select a ride first.');
-                    return;
-                }
-                rideOptionsContainer.style.display = 'none';
-                searchingUI.style.display = 'block';
-                searchTimeout = setTimeout(() => {
-                    alert("We've found a rider for you!");
-                    rideOptionsContainer.style.display = 'block';
-                    searchingUI.style.display = 'none';
-                }, 5000);
-            });
+            if (rideCards) {
+                rideCards.forEach(card => {
+                    card.addEventListener('click', () => {
+                        rideCards.forEach(c => c.classList.remove('selected'));
+                        card.classList.add('selected');
+                    });
+                });
+            }
+
+            if (bookRideFinalBtn) {
+                bookRideFinalBtn.addEventListener('click', () => {
+                    if (!document.querySelector('.ride-card.selected')) {
+                        alert('Please select a ride first.');
+                        return;
+                    }
+                    if (rideOptionsContainer) rideOptionsContainer.style.display = 'none';
+                    if (searchingUI) searchingUI.style.display = 'block';
+                    searchTimeout = setTimeout(() => {
+                        alert("We've found a rider for you!");
+                        if (rideOptionsContainer) rideOptionsContainer.style.display = 'block';
+                        if (searchingUI) searchingUI.style.display = 'none';
+                        showPage('book-ride-page'); // Go back to booking page after ride is 'found'
+                    }, 5000);
+                });
+            }
             
-            cancelSearchBtn.addEventListener('click', () => {
-                clearTimeout(searchTimeout);
-                alert("Search canceled.");
-                rideOptionsContainer.style.display = 'block';
-                searchingUI.style.display = 'none';
-            });
+            if (cancelSearchBtn) {
+                cancelSearchBtn.addEventListener('click', () => {
+                    clearTimeout(searchTimeout);
+                    alert("Search canceled.");
+                    if (rideOptionsContainer) rideOptionsContainer.style.display = 'block';
+                    if (searchingUI) searchingUI.style.display = 'none';
+                });
+            }
         });
     </script>
 </body>
