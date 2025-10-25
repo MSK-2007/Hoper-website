@@ -49,7 +49,7 @@
         .form-field { width: 100%; padding: 1rem; margin-bottom: 1rem; border: 1px solid var(--medium-gray); border-radius: var(--border-radius-round); font-size: 1rem; }
         .password-wrapper { position: relative; width: 100%; margin-bottom: 1rem; }
         .password-wrapper .form-field { margin-bottom: 0; }
-        #password-toggle-icon { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--dark-gray); }
+        #password-toggle-icon, #confirm-password-toggle-icon { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--dark-gray); }
         .form-btn { width: 100%; padding: 1rem; border: none; border-radius: var(--border-radius-round); background-color: var(--primary-black); color: var(--primary-white); font-size: 1rem; font-weight: 600; cursor: pointer; margin-bottom: 1rem; transition: background-color 0.2s ease; }
         .form-btn:hover { background-color: var(--dark-gray); }
         #form-toggle-link { display: block; color: var(--accent-blue); text-decoration: none; margin-bottom: 1rem; font-size: 0.9rem; }
@@ -58,6 +58,7 @@
         .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--medium-gray); }
         .social-login-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem; width: 100%; padding: 1rem; border: none; border-radius: var(--border-radius-round); background-color: var(--primary-black); color: var(--primary-white); font-size: 1rem; font-weight: 600; cursor: pointer; }
         .social-login-btn .fa-google { color: #DB4437; }
+        .hidden { display: none; } /* Utility class to hide elements */
 
         /* --- Booking & Ride Pages --- */
         #book-ride-page .left-side, #choose-ride-page .left-side { display: flex; flex-direction: column; gap: 1.5rem; padding-right: 2rem; }
@@ -131,8 +132,14 @@
                             <input type="password" id="password-input" class="form-field" placeholder="Password (min. 6 characters)" required>
                             <i class="fa-solid fa-eye" id="password-toggle-icon"></i>
                         </div>
+                        <!-- NEW: Confirm Password Field (hidden initially) -->
+                        <div class="password-wrapper hidden" id="confirm-password-wrapper">
+                             <input type="password" id="confirm-password-input" class="form-field" placeholder="Confirm Password" required>
+                             <i class="fa-solid fa-eye" id="confirm-password-toggle-icon"></i>
+                        </div>
+
                         <button type="submit" id="sign-in-btn" class="form-btn">Sign In</button>
-                        <button type="submit" id="create-account-btn" class="form-btn" style="display: none;">Create Account</button>
+                        <button type="submit" id="create-account-btn" class="form-btn hidden">Create Account</button>
                     </form>
                     <a href="#" id="form-toggle-link">Don't have an account? Sign Up</a>
                     <a href="#" id="forgot-password-link">Forgot Password?</a>
@@ -258,6 +265,10 @@
             const rideOptionsContainer = document.getElementById('ride-options-container');
             const searchingUI = document.getElementById('searching-ui');
             const cancelSearchBtn = document.getElementById('cancel-search-btn');
+            // NEW: Confirm Password Elements
+            const confirmPasswordWrapper = document.getElementById('confirm-password-wrapper');
+            const confirmPasswordInput = document.getElementById('confirm-password-input');
+            const confirmPasswordToggleIcon = document.getElementById('confirm-password-toggle-icon');
             
             let isSignUpMode = false;
             let searchTimeout;
@@ -296,6 +307,7 @@
                  navLogoutBtn.addEventListener('click', (e) => { e.preventDefault(); auth.signOut(); });
             }
 
+            // --- Password Toggles ---
             if (passwordToggleIcon) {
                 passwordToggleIcon.addEventListener('click', () => {
                     const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -304,7 +316,17 @@
                     passwordToggleIcon.classList.toggle('fa-eye-slash');
                 });
             }
+             // NEW: Confirm Password Toggle Logic
+            if (confirmPasswordToggleIcon) {
+                 confirmPasswordToggleIcon.addEventListener('click', () => {
+                     const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                     confirmPasswordInput.setAttribute('type', type);
+                     confirmPasswordToggleIcon.classList.toggle('fa-eye');
+                     confirmPasswordToggleIcon.classList.toggle('fa-eye-slash');
+                 });
+            }
 
+            // --- Form Mode Toggle ---
             if (formToggleLink) {
                 formToggleLink.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -313,23 +335,36 @@
                     if (signInBtn) signInBtn.style.display = isSignUpMode ? 'none' : 'block';
                     if (createAccountBtn) createAccountBtn.style.display = isSignUpMode ? 'block' : 'none';
                     e.target.textContent = isSignUpMode ? "Already have an account? Sign In" : "Don't have an account? Sign Up";
+                    // NEW: Show/Hide Confirm Password field
+                    if (confirmPasswordWrapper) confirmPasswordWrapper.classList.toggle('hidden', !isSignUpMode);
                     if (forgotPasswordLink) forgotPasswordLink.style.display = isSignUpMode ? 'none' : 'block';
                 });
             }
 
+            // --- Email Form Submission ---
             if (emailForm) {
                 emailForm.addEventListener('submit', (e) => {
                     e.preventDefault();
                     const email = emailInput.value;
                     const password = passwordInput.value;
+
                     if (isSignUpMode) {
+                        // NEW: Check if passwords match
+                        const confirmPassword = confirmPasswordInput.value;
+                        if (password !== confirmPassword) {
+                            alert("Passwords do not match. Please try again.");
+                            return; // Stop the function
+                        }
+                        // If they match, create user
                         auth.createUserWithEmailAndPassword(email, password).catch(handleAuthError);
                     } else {
+                        // Sign In
                         auth.signInWithEmailAndPassword(email, password).catch(handleAuthError);
                     }
                 });
             }
             
+            // --- Forgot Password ---
             if (forgotPasswordLink) {
                 forgotPasswordLink.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -344,7 +379,15 @@
 
             function handleAuthError(error) {
                 console.error("Auth Error:", error.code, error.message);
-                alert(error.message);
+                let errorMessage = error.message; // Default to Firebase message
+                 if (error.code === 'auth/weak-password') {
+                     errorMessage = "Password should be at least 6 characters.";
+                 } else if (error.code === 'auth/email-already-in-use') {
+                     errorMessage = "An account with this email already exists. Please Sign In.";
+                 } else if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                     errorMessage = "Invalid email or password.";
+                 }
+                alert(errorMessage);
             }
 
             // --- Navigation Event Listeners ---
